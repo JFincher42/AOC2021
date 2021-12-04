@@ -56,6 +56,10 @@ public class Day03 {
 		return 1;
 	}
 	
+	public int foo(int...v) {
+		return v.length;
+	}
+	
 	public static char charToFind(ArrayList<String> lines, int bit, boolean most)
 	{
 		int oneCount=0, zeroCount=0;

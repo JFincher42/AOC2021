@@ -5,9 +5,95 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.util.ArrayList;
 
+class BingoCard{
+	int[][] card;
+	
+	BingoCard(String[] lines){
+		this.card = new int[5][5];
+		
+		for (int i=0; i<lines.length; i++) {
+			String[] entries = lines[i].strip().split("\\s+");
+			for (int j=0; j<entries.length; j++) {
+				this.card[i][j] = Integer.parseInt(entries[j]);
+			}
+		}
+	}
+	
+	void markNumber(int number) {
+		for (int i=0; i<card.length; i++)
+			for (int j=0; j<card[i].length; j++)
+				if (card[i][j] == number)
+					card[i][j] = -1;
+	}
+	
+	boolean hasBingo() {
+		
+		for (int i=0; i<card.length; i++) {
+			// Is there a row bingo?
+			if ((card[i][0]==-1) && 
+				(card[i][1]==-1) &&
+				(card[i][2]==-1) &&
+				(card[i][3]==-1) &&
+				(card[i][4]==-1))	return true;
+			
+			// Is there a column bingo?
+			if ((card[0][i]==-1) && 
+				(card[1][i]==-1) &&
+				(card[2][i]==-1) &&
+				(card[3][i]==-1) &&
+				(card[4][i]==-1))	return true;
+				
+		}
+		// No bingo anywhere
+		return false;
+	}
+
+	int getSumRemaining() {
+		int sum = 0;
+		for (int i=0; i<card.length; i++)
+			for (int j=0; j<card[i].length; j++)
+				if (card[i][j] != -1)
+					sum += card[i][j];
+		return sum;
+	}
+		
+}
+
+
 public class Day04 {
 	
+	public static ArrayList<Integer> calledNumbers = new ArrayList<>();
+	public static ArrayList<BingoCard> bingoCards = new ArrayList<>();
+	
+	public static void getCalledNumbers(String line) {
+		String[] called = line.split(",");
+		for (String num: called)
+			calledNumbers.add(Integer.parseInt(num));
+	}
+	
 	public static int part1(ArrayList<String> lines) {
+		// The first line is our called numbers
+		getCalledNumbers(lines.get(0));
+		
+		// Skip the blank, and start processing bingo cards
+		int currentLine = 1;
+		while (currentLine < lines.size()-1) {
+			String[] cardLines = (String[])lines.subList(currentLine, currentLine+5).toArray(new String[0]);
+			bingoCards.add(new BingoCard(cardLines));
+			// Get past this card and the blank line
+			currentLine += 5;
+		}
+		
+		for (int call:calledNumbers) {
+			for (BingoCard card: bingoCards) {
+				card.markNumber(call);
+				if (card.hasBingo()) {
+					System.out.println("Card: " + call + ", bingo sum: " + card.getSumRemaining());
+					return call*card.getSumRemaining();
+				}
+			}
+			
+		}
 		return 0;
 	}
 	
