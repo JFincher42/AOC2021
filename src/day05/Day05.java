@@ -3,7 +3,6 @@ package day05;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.util.ArrayList;
-import java.util.HashMap;
 
 class Point{
 	int x, y;
@@ -112,21 +111,14 @@ public class Day05 {
 					rightMost = segment.pt1;
 				}
 				
-				// Now which way do we slope - up or down
-				int xInc = 1, yInc;
-				if (rightMost.y > leftMost.y) {
-					yInc = 1;
-				} else {
-					yInc = -1;
-				}
-				
+				// Now which way do we slope - up or down				
+				int xInc = 1, yInc=((rightMost.y-leftMost.y) / Math.abs(rightMost.y-leftMost.y));
 				// Now we can work
 				int x = leftMost.x; int y = leftMost.y;
-				while (x <= rightMost.x) {
+				for (; x <= rightMost.x; x += xInc, y += yInc) {
 					if (field[x][y] == 1)
 						intersections+=1;
 					field[x][y] += 1;
-					x += xInc; y += yInc;
 				}
 			}
 		}
