@@ -6,6 +6,14 @@ import java.util.ArrayList;
 
 public class Day11 {
 	
+	public static void printMap(int[][] map) {
+		for (int r=0; r<10; r++)
+			System.out.printf("|%1$2d|%2$2d|%3$2d|%4$2d|%5$2d|%6$2d|%7$2d|%8$2d|%9$2d|%10$2d|\n",
+					map[r][0],map[r][1],map[r][2],map[r][3],map[r][4],
+					map[r][5],map[r][6],map[r][7],map[r][8],map[r][9]);
+		System.out.println();
+	}
+	
 	public static void increment(int[][] map, int r, int c) {
 		if (map[r][c] == -1) return;
 		map[r][c]++;
@@ -14,10 +22,13 @@ public class Day11 {
 	public static int flash(int[][] map) {
 		int flashCount = 0;
 
+//		System.out.println("Entry");
+//		printMap(map);
 		// First, increment everything
 		for (int r = 0; r < 10; r++)
 			for (int c = 0; c < 10; c++)
 				map[r][c]++;
+
 
 		// Now, rescan and check for numbers == 10
 		// We need to keep doing this until we don't process anymore
@@ -25,6 +36,9 @@ public class Day11 {
 		while (flashed) {
 			// We haven't flashed this round
 			flashed = false;
+//			System.out.println("Flashing...");
+//			printMap(map);
+
 
 			// New flashes will be == 10
 			// Old ones will be > 10, so we can ignore those
@@ -62,6 +76,9 @@ public class Day11 {
 			for (int c = 0; c < 10; c++)
 				if (map[r][c] == -1) map[r][c] = 0;
 		
+//		System.out.println("Done flashing");
+//		printMap(map);
+		
 		return flashCount;
 	}
 
@@ -85,9 +102,11 @@ public class Day11 {
 
 	public static int part2(int[][] map) {
 		boolean allFlashed = false;
-		int step = 0;
+		// Set step to 100, since we did 100 iterations for Part 1 already
+		int step = 100;
 		
 		while (!allFlashed) {
+//			System.out.println("Step " + (step+1));
 			flash(map);
 			allFlashed = allZero(map);
 			step++;
@@ -98,9 +117,9 @@ public class Day11 {
 
 	public static void main(String[] argv) {
 		BufferedReader input = null;
-//		String filename="src/day11/input";
+		String filename="src/day11/input";
 //		String filename = "src/day11/sample";
-		String filename = "src/day11/sample2";
+//		String filename = "src/day11/sample2";
 
 		ArrayList<String> lines = new ArrayList<>();
 
@@ -118,6 +137,7 @@ public class Day11 {
 			System.exit(1);
 		}
 
+		// Create the integer map
 		int[][] map = new int[10][10];
 
 		for (int r = 0; r < lines.size(); r++) {
