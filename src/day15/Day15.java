@@ -32,6 +32,8 @@ public class Day15 {
 		// Push the next two nodes onto the queue
 		nodes.add(new Long[] {0l, 1l, 0l});
 		nodes.add(new Long[] {1l, 0l, 0l});
+		shortest[0][1] = Long.MAX_VALUE;
+		shortest[1][0] = Long.MAX_VALUE;
 		
 		// While we still have nodes to visit
 		while (!nodes.isEmpty()) {
@@ -41,7 +43,7 @@ public class Day15 {
 			int r = (int)rl; int c = (int)cl;
 			
 			// Where are we?
-			System.out.println("Visiting node["+ r + "]["+ c + "], length=" + l + ", nodes remaining=" + nodes.size());
+//			System.out.println("Visiting node["+ r + "]["+ c + "], length=" + l + ", nodes remaining=" + nodes.size());
 			
 
 			// Is this the first time visiting this node?
@@ -62,8 +64,11 @@ public class Day15 {
 					shortest[r][c-1] = Long.MAX_VALUE;
 				}
 				// Else if we have a shorter path, set that path
-				else if (shortest[r][c] + floor[r][c-1] < shortest[r][c-1])
+				else
+					if (shortest[r][c] + floor[r][c-1] < shortest[r][c-1]) {
 					shortest[r][c-1] = shortest[r][c] + floor[r][c-1];
+					nodes.add(new Long[] {(long)r, (long)c-1, shortest[r][c]});
+				}
 			}
 			
 			if (c+1 < endC) {
@@ -73,8 +78,11 @@ public class Day15 {
 					shortest[r][c+1] = Long.MAX_VALUE;
 				}
 				// Else if we have a shorter path, set that path
-				else if (shortest[r][c] + floor[r][c+1] < shortest[r][c+1])
+				else 
+					if (shortest[r][c] + floor[r][c+1] < shortest[r][c+1]) {
 					shortest[r][c+1] = shortest[r][c] + floor[r][c+1];
+					nodes.add(new Long[] {(long)r, (long)c+1, shortest[r][c]});
+				}
 			}
 			
 			if (r-1 >= 0) {
@@ -84,8 +92,11 @@ public class Day15 {
 					shortest[r-1][c] = Long.MAX_VALUE;
 				}
 				// Else if we have a shorter path, set that path
-				else if (shortest[r][c] + floor[r-1][c] < shortest[r-1][c])
+				else 
+					if (shortest[r][c] + floor[r-1][c] < shortest[r-1][c]) {
 					shortest[r-1][c] = shortest[r][c] + floor[r-1][c];
+					nodes.add(new Long[] {(long)r-1, (long)c, shortest[r][c]});
+				}
 			}
 			
 			if (r+1 < endR) {
@@ -95,8 +106,11 @@ public class Day15 {
 					shortest[r+1][c] = Long.MAX_VALUE;
 				}
 				// Else if we have a shorter path, set that path
-				else if (shortest[r][c] + floor[r+1][c] < shortest[r+1][c])
+				else 
+					if (shortest[r][c] + floor[r+1][c] < shortest[r+1][c]) {
 					shortest[r+1][c] = shortest[r][c] + floor[r+1][c];
+					nodes.add(new Long[] {(long)r+1, (long)c, shortest[r][c]});
+				}
 			}
 		}
 
@@ -109,8 +123,26 @@ public class Day15 {
 		return findPath(floor);
 	}
 	
-	public static int part2(int[][] floor) {
-		return 0;
+	public static long part2(int[][] floor) {
+
+		// Make the new larger floor
+		int rMax = floor.length;
+		int cMax = floor[0].length;
+		int[][] newFloor=new int[rMax*5][cMax*5];
+		
+		for (int r=0; r<floor.length; r++) {
+			for (int c=0; c<floor[0].length; c++) {
+				for (int rmul=0; rmul<5; rmul++) {
+					for (int cmul=0; cmul<5; cmul++) {
+						int newRisk = floor[r][c] + rmul + cmul;
+						if (newRisk > 9) newRisk -= 9;
+						newFloor[r+rMax*rmul][c+cMax*cmul] = newRisk;
+					}	
+				}
+			}
+		}
+		
+		return findPath(newFloor);
 	}
 	
 	public static int[][] getCaveFloor(ArrayList<String> lines){
@@ -149,7 +181,7 @@ public class Day15 {
 		int[][] floor = getCaveFloor(lines);
 
 		System.out.println("Part 1: " + part1(floor));
-//		System.out.println("Part 2: " + part2(lines));
+		System.out.println("Part 2: " + part2(floor));
 
 	}
 }
