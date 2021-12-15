@@ -44,7 +44,6 @@ public class Day15 {
 			
 			// Where are we?
 //			System.out.println("Visiting node["+ r + "]["+ c + "], length=" + l + ", nodes remaining=" + nodes.size());
-			
 
 			// Is this the first time visiting this node?
 			if (shortest[r][c] == Long.MAX_VALUE)
