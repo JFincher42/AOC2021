@@ -3,6 +3,7 @@ package day16;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.util.ArrayList;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class Day16 {
 		
@@ -20,11 +21,7 @@ public class Day16 {
 		
 		return decoded.toString();
 	}
-	
-	public static void changeLiteral(Integer literal) {
-		literal += 100;
-	}
-	
+		
 	public static int part1(String line) {
 		String decoded = parseTransmission(line);
 		System.out.println(line + " = " + decoded);
@@ -46,8 +43,6 @@ public class Day16 {
 			literal = Integer.parseInt(strLit.toString(), 2);
 		}
 		
-		System.out.println("V=" + version + ", T=" + type + ", Literal=" + literal);
-		changeLiteral(literal);
 		System.out.println("V=" + version + ", T=" + type + ", Literal=" + literal);
 		
 		return version;
