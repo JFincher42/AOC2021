@@ -30,5 +30,7 @@ class Packet{
 		this.type = type;
 		this.value = 0;
 	}
+	
+	
 
 }

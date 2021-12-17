@@ -21,29 +21,38 @@ public class Day16 {
 		return decoded.toString();
 	}
 	
-	public static void changeLiteral(Integer literal) {
-		literal += 100;
-	}
-	
 	public static int part1(String line) {
 		String decoded = parseTransmission(line);
 		System.out.println(line + " = " + decoded);
 		
-		int version = Integer.parseInt(decoded.substring(0, 3), 2);
-		int type = Integer.parseInt(decoded.substring(3, 6), 2);
 		int literal = 0;
 		
-		if (type == 4) {
-			StringBuilder strLit = new StringBuilder();
-			int start = 6;
-			String next = decoded.substring(start, start+5);
-			while (next.charAt(0) == '1') {
+		int currentChar = 0;
+
+		while (currentChar < line.length()) {
+			// Get the version and type of the 
+			int version = Integer.parseInt(decoded.substring(currentChar, currentChar+3), 2);
+			int type = Integer.parseInt(decoded.substring(currentChar+3, currentChar+6), 2);
+			
+			currentChar += 6;
+			
+			if (type == 4) {
+				// This is a literal
+				StringBuilder strLit = new StringBuilder();
+				String next = decoded.substring(currentChar, currentChar+5);
+				currentChar += 5;
+				while (next.charAt(0) == '1') {
+					strLit.append(next.substring(1));
+					next = decoded.substring(currentChar, currentChar+5);
+					currentChar += 5;
+				}
 				strLit.append(next.substring(1));
-				start += 5;
-				next = decoded.substring(start, start+5);
+				literal = Integer.parseInt(strLit.toString(), 2);
+
+			} else {
+				// This is an operator
 			}
-			strLit.append(next.substring(1));
-			literal = Integer.parseInt(strLit.toString(), 2);
+			
 		}
 		
 		System.out.println("V=" + version + ", T=" + type + ", Literal=" + literal);
