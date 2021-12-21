@@ -46,6 +46,8 @@ public class Day18 {
 //		String filename="src/day18/sample2";
 //		String filename="src/day18/sample3";
 //		String filename="src/day18/sample4";
+//		String filename="src/day18/sample5";
+		
 		
 		ArrayList<String> lines = new ArrayList<>();
 		

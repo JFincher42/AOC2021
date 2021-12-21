@@ -27,13 +27,15 @@ public class Day16 {
 		System.out.println(line + " = " + decoded);
 		
 		int literal = 0;
+		int version = 0;
+		int type = 0;
 		
 		int currentChar = 0;
 
 		while (currentChar < line.length()) {
 			// Get the version and type of the 
-			int version = Integer.parseInt(decoded.substring(currentChar, currentChar+3), 2);
-			int type = Integer.parseInt(decoded.substring(currentChar+3, currentChar+6), 2);
+			version = Integer.parseInt(decoded.substring(currentChar, currentChar+3), 2);
+			type = Integer.parseInt(decoded.substring(currentChar+3, currentChar+6), 2);
 			
 			currentChar += 6;
 			
