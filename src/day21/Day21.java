@@ -3,6 +3,10 @@ package day21;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.util.ArrayList;
+import java.util.HashMap;
+
+record State(int p1, int p2, long s1, long s2) {	
+}
 
 public class Day21 {
 	
@@ -59,7 +63,51 @@ public class Day21 {
 		else				return p2Score * die;
 	}
 	
+	public static HashMap<State, long[]> savedPositions;
+	
+	public static long[] countWins(int p1, int p2, long s1, long s2) {
+		// Per https://www.youtube.com/watch?v=a6ZdJEntKkk
+		// Recursion with memoization
+		
+		// Did someone already win?
+		if (s1 >= 21) return new long[] {1,0};
+		if (s2 >= 21) return new long[] {0,1};
+		
+		// Have we seen this state before
+		if (savedPositions.containsKey(new State(p1, p2, s1, s2)))
+			return savedPositions.get(new State(p1, p2, s1, s2));
+		
+		// Let's do this thing
+		long[] ans = new long[] {0, 0};
+		
+ 		for (int d1=1; d1 <= 3; d1++) {
+			for (int d2=1; d2 <= 3; d2++) {
+				for (int d3=1; d3 <= 3; d3++) {
+					int newp1 = (p1 + d1 + d2 + d3);
+					if (newp1 > 10) {
+						newp1 = newp1 % 10;
+						// If hit 10, then the mod is 0, so restore it
+						if (newp1 == 0) newp1 = 10;
+					}
+					long news1 = s1 + newp1;
+		
+					long[] newans = countWins(p2, newp1, s2, news1);
+					ans[0] += newans[1]; ans[1] += newans[0];
+				}
+			}
+		}
+ 		savedPositions.put(new State(p1, p2, s1, s2), ans);
+ 		return ans;
+
+	}
+	
 	public static int part2(int p1, int p2) {
+		// Initialize the map
+		savedPositions = new HashMap<>(10*10*21*21);
+		long[] wins = countWins(p1, p2, 0, 0);
+		
+		System.out.println("" + wins[0] + ", " + wins[1]);
+		
 		return 0;
 	}
 	
