@@ -6,6 +6,8 @@ import java.util.ArrayList;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class Day16 {
+	static String line;
+	static int currentChar;
 		
 	public static String parseTransmission(String trans) {
 		// We need to convert everything from hex to binary
@@ -21,46 +23,87 @@ public class Day16 {
 		
 		return decoded.toString();
 	}
+	
+	public static int getIntValue(int bitCount) {
+		int num = Integer.parseInt(line.substring(currentChar, currentChar+bitCount), 2);
+		currentChar+=bitCount;
+		return num;
+	}
+	
+	public static String getSubstring(int bitCount) {
+		String sub = line.substring(currentChar, currentChar+bitCount);
+		currentChar+=bitCount;
+		return sub;
+	}
+	
+	public static Packet parseLine() {
+		Packet packet;
 		
-	public static int part1(String line) {
-		String decoded = parseTransmission(line);
-		System.out.println(line + " = " + decoded);
-		
-		int literal = 0;
 		int version = 0;
 		int type = 0;
-		
-		int currentChar = 0;
 
 		while (currentChar < line.length()) {
-			// Get the version and type of the 
-			version = Integer.parseInt(decoded.substring(currentChar, currentChar+3), 2);
-			type = Integer.parseInt(decoded.substring(currentChar+3, currentChar+6), 2);
-			
-			currentChar += 6;
+			// Get the version and type of the packet
+			version = getIntValue(3);
+			type = getIntValue(3);
 			
 			if (type == 4) {
 				// This is a literal
 				StringBuilder strLit = new StringBuilder();
-				String next = decoded.substring(currentChar, currentChar+5);
-				currentChar += 5;
+				String next = getSubstring(5);
 				while (next.charAt(0) == '1') {
 					strLit.append(next.substring(1));
-					next = decoded.substring(currentChar, currentChar+5);
-					currentChar += 5;
+					next = getSubstring(5);
 				}
 				strLit.append(next.substring(1));
-				literal = Integer.parseInt(strLit.toString(), 2);
+				int literal = Integer.parseInt(strLit.toString(), 2);
+				packet = new Packet(version, type, literal);
 
 			} else {
 				// This is an operator
+				// Get length type ID
+				String ltID = getSubstring(1);
+				if (ltID.charAt(0) == '0') {
+					// Length, get next 15 bits
+					int length = getIntValue(15);
+					
+				} else {
+					// Sub=packet count
+					int subpackets = getIntValue(11);
+					
+					packet = new Packet(version, type);
+					packet.subPackets = new ArrayList<>(subpackets);
+					
+					while (subpackets > 0) {
+						subpackets--;
+						
+					}
+				}
 			}
-			
 		}
 		
-		System.out.println("V=" + version + ", T=" + type + ", Literal=" + literal);
+		return packet;
+	}
+	
+	public static int countVersion(Packet root) {
+		if (root.type == 4) return root.version;
+		else {
+			int total = 0;
+			for (Packet subpacket:root.subPackets) {
+				total += countVersion(subpacket);
+			}
+			return total + root.version;
+		}
+	}
 		
-		return version;
+	public static int part1(String hexLine) {
+		line = parseTransmission(hexLine);
+		System.out.println(hexLine + " = " + line);
+		currentChar = 0;
+		
+		Packet output = parseLine();
+		
+		return countVersion(output);
 	}
 	
 	public static int part2(ArrayList<String> lines) {
