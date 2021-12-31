@@ -3,7 +3,6 @@ package day16;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.util.ArrayList;
-import java.util.concurrent.atomic.AtomicInteger;
 
 public class Day16 {
 	static String line;
@@ -36,51 +35,72 @@ public class Day16 {
 		return sub;
 	}
 	
+	public static boolean dataRemains() {
+		for (int i=currentChar; i<line.length(); i++) {
+			if (line.charAt(i)=='1') return true;
+		}
+		return false;
+	}
+	
 	public static Packet parseLine() {
-		Packet packet;
+		Packet packet=null;
 		
 		int version = 0;
 		int type = 0;
 
-		while (currentChar < line.length()) {
+//		while (currentChar < line.length() && dataRemains()) {
 			// Get the version and type of the packet
 			version = getIntValue(3);
 			type = getIntValue(3);
 			
 			if (type == 4) {
 				// This is a literal
+				// Build the string of bits
 				StringBuilder strLit = new StringBuilder();
 				String next = getSubstring(5);
+				// Keep adding bits while each block of five starts with a '1'
 				while (next.charAt(0) == '1') {
 					strLit.append(next.substring(1));
 					next = getSubstring(5);
 				}
+				// The last set of bits started with a '0'
 				strLit.append(next.substring(1));
-				int literal = Integer.parseInt(strLit.toString(), 2);
+				long literal = Long.parseLong(strLit.toString(), 2);
+				
+				// Create a literal packet with the version, type, and value
 				packet = new Packet(version, type, literal);
 
 			} else {
-				// This is an operator
+				// This is an operator 
+				// Build an operator packet 
+				packet = new Packet(version, type);
+				// Initialize the sub-packets list
+				packet.subPackets = new ArrayList<>();
+
 				// Get length type ID
 				String ltID = getSubstring(1);
 				if (ltID.charAt(0) == '0') {
-					// Length, get next 15 bits
+					// This is a length operator, so get next 15 bits
 					int length = getIntValue(15);
+					// Figure out where the end should be
+					int end = currentChar + length;
+
+					while (currentChar <= end && dataRemains()) {
+						packet.subPackets.add(parseLine());
+					}
 					
 				} else {
-					// Sub=packet count
+					// This is a sub-packet count, so get the next 11 bits
 					int subpackets = getIntValue(11);
-					
-					packet = new Packet(version, type);
-					packet.subPackets = new ArrayList<>(subpackets);
-					
+										
+					// Process all the sub-packets
 					while (subpackets > 0) {
 						subpackets--;
-						
+						packet.subPackets.add(parseLine());						
 					}
 				}
 			}
-		}
+//		}
 		
 		return packet;
 	}
@@ -112,8 +132,8 @@ public class Day16 {
 	
 	public static void main(String[] argv) {
 		BufferedReader input = null;
-//		String filename="src/day16/input";
-		String filename="src/day16/sample1";
+		String filename="src/day16/input";
+//		String filename="src/day16/sample1";
 //		String filename="src/day16/sample2";
 //		String filename="src/day16/sample3";
 //		String filename="src/day16/sample4";

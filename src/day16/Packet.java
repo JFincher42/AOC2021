@@ -7,7 +7,7 @@ class Packet{
 	public int type;
 
 	// If type == 4, this will have something in it
-	public int value;
+	public long value;
 
 	// If type != 4, this will have something in it
 	public ArrayList<Packet> subPackets;
@@ -19,7 +19,7 @@ class Packet{
 		this.subPackets = null;
 	}
 	
-	Packet(int version, int type, int value){
+	Packet(int version, int type, long value){
 		this.version = version;
 		this.type = type;
 		this.value = value;
@@ -28,7 +28,7 @@ class Packet{
 	Packet(int version, int type){
 		this.version = version;
 		this.type = type;
-		this.value = 0;
+		this.value = 0l;
 	}
 	
 	
