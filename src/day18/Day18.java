@@ -1,4 +1,4 @@
-package day18;
+	package day18;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -6,8 +6,43 @@ import java.util.ArrayList;
 
 public class Day18 {
 	
-	public static String reduce(String snum) {
-		return snum;
+	public static int getNumber(StringBuilder snum, int index) {
+		int i = index+1;
+		if ("0123456789".contains(snum.subSequence(i, i+1)))
+			i+=1;
+		return Integer.parseInt(snum.subSequence(index, i).toString());
+	}
+	
+	public static String reduce(StringBuilder snum) {
+		int index = 0;
+		boolean changed = false;
+		int level = 0;
+		
+		do {
+			switch (snum.charAt(index)) {
+			case '[': level++; break;
+			case ',': break;
+			case ']': level--; break;
+			default:
+				// It's a number, so get the number
+				int num = getNumber(snum, index);
+				
+				// Check for an explode
+				if (level > 4) {
+					// Get the number after the comma
+					while (snum.charAt(index) != ',') index++;
+					int second = getNumber(snum, index+1);
+					
+				} else if (num >= 10) {
+					// It's a split
+				}
+				
+			}
+			
+			index++;
+		} while ((index < snum.length()) && (!changed));
+		
+		return snum.toString();
 	}
 	
 	public static int part1(ArrayList<String> lines) {
@@ -22,13 +57,16 @@ public class Day18 {
 			String right = lines.get(currentLine++);
 			
 			// Build a new string
-			newLine = newLine.append('[').append(left).append(",").append(right).append(']');
+			newLine = newLine.append('[')
+							 .append(left)
+							 .append(",")
+							 .append(right)
+							 .append(']');
 			
 			// Reduce this line
-			left = reduce(newLine.toString());
+			left = reduce(newLine);
 			
 			// Get the next line
-//			currentLine += 1;
 			
 		}
 		System.out.println(left);
